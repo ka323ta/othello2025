@@ -111,63 +111,65 @@ class StrongAI:
         return (player_count - opponent_count) * 100
     
     def get_legal_moves(self, board, player):
-        legal_moves = []
-        for i in range(8):
-            for j in range(8):
-                if self.is_legal_move(board, i, j, player):
-                    legal_moves.append((i, j))
-        return legal_moves
+    legal_moves = []
+    N = len(board)
+    for i in range(1, N - 1):
+        for j in range(1, N - 1):
+            if self.is_legal_move(board, i, j, player):
+                legal_moves.append((i, j))
+    return legal_moves
     
     def is_legal_move(self, board, row, col, player):
         if board[row][col] != 0:
-            return False
-        
-        opponent = 3 - player
-        directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-        
-        for di, dj in directions:
-            ni, nj = row + di, col + dj
-            found_opponent = False
-            
-            while 0 <= ni < 8 and 0 <= nj < 8:
-                if board[ni][nj] == opponent:
-                    found_opponent = True
-                elif board[ni][nj] == player:
-                    if found_opponent:
-                        return True
-                    break
-                else:
-                    break
-                ni += di
-                nj += dj
-        
         return False
+
+        opponent = 3 - player
+        N = len(board)
+
+        for di, dj in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
+             ni, nj = row + di, col + dj
+            found_opponent = False
+
+        while 0 <= ni < N and 0 <= nj < N:
+            if board[ni][nj] == opponent:
+                found_opponent = True
+            elif board[ni][nj] == player:
+                if found_opponent:
+                    return True
+                break
+            else:
+                break
+            ni += di
+            nj += dj
+
+    return False
+
     
     def make_move(self, board, move, player):
-        new_board = deepcopy(board)
-        row, col = move
-        new_board[row][col] = player
-        
-        opponent = 3 - player
-        directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-        
-        for di, dj in directions:
-            ni, nj = row + di, col + dj
-            flipped = []
-            
-            while 0 <= ni < 8 and 0 <= nj < 8:
-                if new_board[ni][nj] == opponent:
-                    flipped.append((ni, nj))
-                elif new_board[ni][nj] == player:
-                    for fi, fj in flipped:
-                        new_board[fi][fj] = player
-                    break
-                else:
-                    break
-                ni += di
-                nj += dj
-        
-        return new_board
+    new_board = deepcopy(board)
+    row, col = move
+    new_board[row][col] = player
+    opponent = 3 - player
+    N = len(board)
+
+    for di, dj in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]:
+        ni, nj = row + di, col + dj
+        flipped = []
+
+        while 0 <= ni < N and 0 <= nj < N:
+            if new_board[ni][nj] == opponent:
+                flipped.append((ni, nj))
+            elif new_board[ni][nj] == player:
+                for fi, fj in flipped:
+                    new_board[fi][fj] = player
+                break
+            else:
+                break
+            ni += di
+            nj += dj
+
+    return new_board
+
 
 _ai = StrongAI()
 
